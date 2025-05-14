@@ -59,3 +59,8 @@ class MetricTemp(BaseModel):
 class MetricTempList(BaseModel):
     inverter_id: int
     metrics: list[MetricTemp]
+
+
+class MetricPowerPlant(BaseModel):
+    plant_id: int
+    total_generation: float
