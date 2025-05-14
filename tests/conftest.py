@@ -41,17 +41,6 @@ def plants(session):
     session.commit()
 
 
-# @pytest.fixture
-# def user(session):
-#     user = User(username='Bruno', email='bruno@email.com', password='password')
-
-#     session.add(user)
-#     session.commit()
-#     session.refresh(user)
-
-#     return user
-
-
 class PlantFactory(factory.Factory):
     class Meta:
         model = models.Plant

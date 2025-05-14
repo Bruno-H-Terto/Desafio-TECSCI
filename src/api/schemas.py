@@ -21,3 +21,19 @@ class PlantPublic(BaseModel):
 
 class PlantList(BaseModel):
     plants: list[PlantPublic]
+
+
+class InverterSchema(BaseModel):
+    plant_id: int
+
+
+class InverterPublic(BaseModel):
+    id: int
+    plant_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class InverterList(BaseModel):
+    inverters: list[InverterPublic]
