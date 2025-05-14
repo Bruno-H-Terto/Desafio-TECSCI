@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import func
 
 from api.models import Metric
 from api.schemas import MetricPowerList
@@ -28,9 +28,14 @@ def get_max_power(
     start_datetime = datetime.combine(start_date, datetime.min.time())
     end_datetime = datetime.combine(end_date, datetime.max.time())
 
-    inverter_data = session.scalars(select(Metric).where(Metric.datetime.between(start_datetime, end_datetime))).all()
+    inverter_data = (
+        session.query(func.date(Metric.datetime).label('date'), func.max(Metric.power).label('power'))
+        .filter(Metric.datetime.between(start_datetime, end_datetime))
+        .group_by(func.date(Metric.datetime))
+        .all()
+    )
 
     return {
         'inverter_id': inverter_id,
-        'metrics': [{'date': metric.datetime.date(), 'power': metric.power} for metric in inverter_data],
+        'metrics': [{'date': metric[0], 'power': metric[1]} for metric in inverter_data],
     }
