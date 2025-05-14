@@ -49,3 +49,13 @@ class MetricPower(BaseModel):
 class MetricPowerList(BaseModel):
     inverter_id: int
     metrics: list[MetricPower]
+
+
+class MetricTemp(BaseModel):
+    date: date
+    temp_celsius: float
+
+
+class MetricTempList(BaseModel):
+    inverter_id: int
+    metrics: list[MetricTemp]
