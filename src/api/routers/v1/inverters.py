@@ -24,8 +24,14 @@ def create_inverter(inverter: InverterSchema, session: T_Session):
 
 
 @router.get('/', response_model=InverterList)
-def index_inverters(session: T_Session, limit: int = 5, offset: int = 0):
-    inverters = session.scalars(select(Inverter).limit(limit).offset(offset)).all()
+def index_inverters(session: T_Session, limit: int = 5, offset: int = 0, plant_id: int = None):
+    query = select(Inverter).limit(limit).offset(offset)
+
+    if plant_id:
+        query = query.where(Inverter.plant_id == plant_id)
+
+    inverters = session.scalars(query).all()
+
     return {'inverters': inverters}
 
 
@@ -43,6 +49,8 @@ def update_inverter(inverter_id: int, inverter_data: InverterSchema, session: T_
 
     if not inverter:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Inverter not found')
+
+    inverter.plant_id = inverter_data.plant_id
 
     session.commit()
     session.refresh(inverter)

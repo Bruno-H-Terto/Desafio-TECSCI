@@ -39,6 +39,33 @@ def test_user_sees_all_inverters(client, session):
     ]
 
 
+def test_list_inverters_with_params(client, session):
+    number_of_inverters = 3
+    plant1 = Plant(plant_name='Plant 1')
+    plant2 = Plant(plant_name='Plant 2')
+    session.add_all([plant1, plant2])
+    session.commit()
+    session.refresh(plant1)
+    session.refresh(plant2)
+
+    inverter1 = Inverter(plant_id=plant1.id)
+    inverter2 = Inverter(plant_id=plant1.id)
+    inverter3 = Inverter(plant_id=plant1.id)
+    inverter4 = Inverter(plant_id=plant2.id)
+    session.add_all([inverter1, inverter2, inverter3, inverter4])
+    session.commit()
+
+    response = client.get(f'/inverters?limit=4&offset=0&plant_id={plant1.id}')
+
+    assert response.status_code == HTTPStatus.OK
+
+    data = response.json()
+    assert len(data['inverters']) == number_of_inverters
+    assert data['inverters'][0]['plant_id'] == plant1.id
+    assert data['inverters'][1]['plant_id'] == plant1.id
+    assert data['inverters'][2]['plant_id'] == plant1.id
+
+
 def test_show_inverter(client, session):
     plant = Plant(plant_name='Test Plant')
     session.add(plant)
@@ -64,20 +91,25 @@ def test_show_inverter_not_found(client):
 
 
 def test_update_inverter(client, session):
-    plant = Plant(plant_name='Test Plant')
-    session.add(plant)
+    plant1 = Plant(plant_name='Plant 1')
+    plant2 = Plant(plant_name='Plant 2')
+    session.add_all([plant1, plant2])
     session.commit()
-    session.refresh(plant)
+    session.refresh(plant1)
+    session.refresh(plant2)
 
-    inverter = Inverter(plant_id=plant.id)
+    inverter = Inverter(plant_id=plant1.id)
     session.add(inverter)
     session.commit()
     session.refresh(inverter)
 
-    response = client.put(f'/inverters/{inverter.id}', json={'plant_id': plant.id})
+    response = client.put(f'/inverters/{inverter.id}', json={'plant_id': plant2.id})
 
-    assert response.json() == {'id': inverter.id, 'plant_id': plant.id}
     assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'id': inverter.id, 'plant_id': plant2.id}
+
+    updated_inverter = session.scalar(select(Inverter).where(Inverter.id == inverter.id))
+    assert updated_inverter.plant_id == plant2.id
 
 
 def test_update_non_existing_inverter(client):
