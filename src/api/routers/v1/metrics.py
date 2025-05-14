@@ -41,7 +41,7 @@ def get_max_power(
     }
 
 
-@router.get('/average_temp', response_model=MetricTempList)
+@router.get('/average_temp/{inverter_id}', response_model=MetricTempList)
 def get_average_temp(
     session: T_Session,
     inverter_id: int,
