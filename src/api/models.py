@@ -11,5 +11,5 @@ class Plant:
     __tablename__ = 'plants'
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
-    plant_name: Mapped[str] = mapped_column(unique=True)
+    plant_name: Mapped[str] = mapped_column(unique=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(init=False, server_default=func.now())

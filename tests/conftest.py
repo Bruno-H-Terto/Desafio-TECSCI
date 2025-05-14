@@ -1,3 +1,4 @@
+import factory
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -5,6 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from config.database import get_session
+from src.api import models
 from src.api.main import app
 from src.api.models import table_registry
 
@@ -33,6 +35,12 @@ def session():
     table_registry.metadata.drop_all(engine)
 
 
+@pytest.fixture
+def plants(session):
+    session.bulk_save_objects(PlantFactory.create_batch(5))
+    session.commit()
+
+
 # @pytest.fixture
 # def user(session):
 #     user = User(username='Bruno', email='bruno@email.com', password='password')
@@ -42,3 +50,10 @@ def session():
 #     session.refresh(user)
 
 #     return user
+
+
+class PlantFactory(factory.Factory):
+    class Meta:
+        model = models.Plant
+
+    plant_name = factory.Sequence(lambda n: f'US-{n + 1}')
