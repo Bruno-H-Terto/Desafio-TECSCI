@@ -73,6 +73,13 @@ def test_update_plant(client, session):
     assert response.status_code == HTTPStatus.OK
 
 
+def test_update_non_existing_plant(client):
+    response = client.put('/plants/999', json={'plant_name': 'US-01'})
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Plant not found'}
+
+
 def test_update_plant_with_duplicate_name(client, session):
     plant1 = Plant(plant_name='BR-01')
     plant2 = Plant(plant_name='US-01')
@@ -88,22 +95,22 @@ def test_update_plant_with_duplicate_name(client, session):
 
 
 def test_delete_existing_plant(client, session):
-    plant = Plant(plant_name="BR-01")
+    plant = Plant(plant_name='BR-01')
     session.add(plant)
     session.commit()
     session.refresh(plant)
 
-    response = client.delete(f"/plants/{plant.id}")
+    response = client.delete(f'/plants/{plant.id}')
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {"message": "Plant deleted"}
+    assert response.json() == {'message': 'Plant deleted'}
 
     deleted = session.scalar(select(Plant).where(Plant.id == plant.id))
     assert deleted is None
 
 
 def test_delete_non_existing_plant(client):
-    response = client.delete("/plants/999")
+    response = client.delete('/plants/999')
 
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json() == {"detail": "Plant not found"}
+    assert response.json() == {'detail': 'Plant not found'}
