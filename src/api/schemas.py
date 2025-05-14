@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import BaseModel, validator
 
 
@@ -32,8 +34,18 @@ class InverterPublic(BaseModel):
     plant_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class InverterList(BaseModel):
     inverters: list[InverterPublic]
+
+
+class MetricPower(BaseModel):
+    date: date
+    power: float
+
+
+class MetricPowerList(BaseModel):
+    inverter_id: int
+    metrics: list[MetricPower]
