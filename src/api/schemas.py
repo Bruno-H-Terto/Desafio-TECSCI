@@ -7,7 +7,7 @@ class PlantSchema(BaseModel):
     @validator('plant_name')
     def name_must_not_be_empty(cls, v):
         if not v.strip():
-            raise ValueError('O nome da usina não pode estar em branco')
+            raise ValueError('plant_name cannot be blank')
         return v
 
 
