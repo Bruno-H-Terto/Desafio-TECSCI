@@ -64,3 +64,8 @@ class MetricTempList(BaseModel):
 class MetricPowerPlant(BaseModel):
     plant_id: int
     total_generation: float
+
+
+class MetricPowerInverter(BaseModel):
+    inverter_id: int
+    total_generation: float

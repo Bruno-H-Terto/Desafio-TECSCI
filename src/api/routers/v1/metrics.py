@@ -3,10 +3,10 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func
+from sqlalchemy import func, select
 
-from api.models import Metric
-from api.schemas import MetricPowerList, MetricPowerPlant, MetricTempList
+from api.models import Inverter, Metric
+from api.schemas import MetricPowerInverter, MetricPowerList, MetricPowerPlant, MetricTempList
 from api.services.utils import TimeSeriesValue, calc_inverters_generation
 from config.database import Session, get_session
 
@@ -109,5 +109,44 @@ def get_power_by_plant(
 
     return {
         'plant_id': plant_id,
+        'total_generation': total_generation,
+    }
+
+
+@router.get('/power_by_inverter/{inverter_id}', response_model=MetricPowerInverter)
+def get_power_by_inverter(
+    session: T_Session,
+    inverter_id: int,
+    start_date: Annotated[datetime, Query(..., alias='start_date')],
+    end_date: Annotated[datetime, Query(..., alias='end_date')],
+):
+    if start_date > end_date:
+        raise HTTPException(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail='Start date cannot be less than the end date'
+        )
+
+    start_datetime = datetime.combine(start_date, datetime.min.time())
+    end_datetime = datetime.combine(end_date, datetime.max.time())
+
+    inverter = session.scalar(select(Inverter).where(Inverter.id == inverter_id))
+    if not inverter:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Inverter not found')
+
+    inverter_data = (
+        session.query(Metric.datetime, Metric.power)
+        .filter(Metric.datetime.between(start_datetime, end_datetime), Metric.inverter_id == inverter_id)
+        .all()
+    )
+
+    class _PowerEntity:
+        def __init__(self, power: list[TimeSeriesValue]):
+            self.power = power
+
+    power_values = [TimeSeriesValue(value=metric.power, date=metric.datetime) for metric in inverter_data]
+
+    total_generation = calc_inverters_generation([_PowerEntity(power=power_values)])
+
+    return {
+        'inverter_id': inverter_id,
         'total_generation': total_generation,
     }
