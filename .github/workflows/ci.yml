@@ -1,27 +1,56 @@
 name: CI
+
 on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_db
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_db
 
     steps:
       - name: Copia os arquivos do repositório
         uses: actions/checkout@v3
 
-      - name: Instalar o python
+      - name: Instalar o Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.13'
+
+      - name: Instalar o pipx
+        run: python -m pip install --upgrade pipx
 
       - name: Instalar o poetry
         run: pipx install poetry
 
       - name: Instalar dependências
         run: poetry install
+
+      - name: Aguardar o banco de dados ficar disponível
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Aguardando banco de dados..."
+            sleep 2
+          done
+
+      - name: Rodar migrações
+        run: poetry run alembic upgrade head
 
       - name: Executar testes
         run: poetry run task test
