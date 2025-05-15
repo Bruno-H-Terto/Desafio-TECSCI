@@ -1,0 +1,31 @@
+networks:
+  backend:
+services:
+  db:
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: app_db
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+  app:
+    image: tecsci
+    command: poetry run uvicorn --host 0.0.0.0 src.app.main:app
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/app_db
+    networks:
+      - backend
+
+volumes:
+  pgdata:
