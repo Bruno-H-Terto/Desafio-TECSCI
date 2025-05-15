@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from sqlalchemy import select
 
-from src.api.models import Inverter, Plant
+from src.app.models import Inverter, Plant
 
 
 def test_create_inverter(client, session):

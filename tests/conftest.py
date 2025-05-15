@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from config.database import get_session
-from src.api import models
-from src.api.main import app
-from src.api.models import table_registry
+from src.app import models
+from src.app.main import app
+from src.app.models import table_registry
 
 
 @pytest.fixture

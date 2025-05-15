@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 
-from api.models import Inverter
-from api.schemas import InverterList, InverterPublic, InverterSchema
+from app.models import Inverter
+from app.schemas import InverterList, InverterPublic, InverterSchema
 from config.database import Session, get_session
 
 router = APIRouter(prefix='/inverters', tags=['inverters'])

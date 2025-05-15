@@ -26,7 +26,7 @@ factory-boy = "^3.3.3"
 
 [tool.ruff]
 line-length = 119
-extend-exclude = ['migrations', 'src/api/services/utils.py']
+extend-exclude = ['migrations', 'src/app/services/utils.py']
 
 [tool.ruff.lint]
 preview = true
@@ -48,9 +48,9 @@ concurrency = ["thread", "greenlet"]
 lint = 'ruff check'
 pre_format = 'ruff check --fix'
 format = 'ruff format'
-run = 'fastapi dev src/api/main.py'
+run = 'fastapi dev src/app/main.py'
 pre_test = 'task lint'
-test = 'pytest -s -x --cov=src/api -vv'
+test = 'pytest -s -x --cov=src/app -vv'
 post_test = 'coverage html'
 
 [build-system]

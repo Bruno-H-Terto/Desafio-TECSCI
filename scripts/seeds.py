@@ -2,8 +2,8 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from api.models import Metric, Plant, Inverter, table_registry
-from config.database import get_session, engine
+from app.models import Inverter, Metric, Plant, table_registry
+from config.database import engine, get_session
 
 print('Droped database')
 table_registry.metadata.drop_all(bind=engine)
@@ -12,8 +12,8 @@ table_registry.metadata.create_all(bind=engine)
 
 
 with get_session() as session:
-    plant1 = Plant(plant_name="Usina 1")
-    plant2 = Plant(plant_name="Usina 2")
+    plant1 = Plant(plant_name='Usina 1')
+    plant2 = Plant(plant_name='Usina 2')
     session.add_all([plant1, plant2])
     session.commit()
 
@@ -25,7 +25,7 @@ with get_session() as session:
     print('Plants and Inverters registered successfully')
 
 
-json_path = Path('src/api/sample/metrics.json')
+json_path = Path('src/app/sample/metrics.json')
 with open(json_path, 'r', encoding='utf-8') as file:
     raw_data = json.load(file)
 

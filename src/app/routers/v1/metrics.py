@@ -5,9 +5,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 
-from api.models import Inverter, Metric
-from api.schemas import MetricPowerInverter, MetricPowerList, MetricPowerPlant, MetricTempList
-from api.services.utils import TimeSeriesValue, calc_inverters_generation
+from app.models import Inverter, Metric
+from app.schemas import MetricPowerInverter, MetricPowerList, MetricPowerPlant, MetricTempList
+from app.services.utils import TimeSeriesValue, calc_inverters_generation
 from config.database import Session, get_session
 
 PLANT_INVERTERS = {1: [1, 2, 3, 4], 2: [5, 6, 7, 8]}

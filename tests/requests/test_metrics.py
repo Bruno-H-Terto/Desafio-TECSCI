@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
-from src.api.models import Inverter, Metric
+from src.app.models import Inverter, Metric
 
 
 def test_get_max_power_per_day(client, session):

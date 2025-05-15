@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from api.routers.v1 import inverters, metrics, plants
+from app.routers.v1 import inverters, metrics, plants
 
 app = FastAPI()
 

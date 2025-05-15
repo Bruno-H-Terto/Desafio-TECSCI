@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 
-from api.models import Plant
-from api.schemas import PlantList, PlantPublic, PlantSchema
+from app.models import Plant
+from app.schemas import PlantList, PlantPublic, PlantSchema
 from config.database import Session, get_session
 
 router = APIRouter(prefix='/plants', tags=['plants'])

@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from sqlalchemy import select
 
-from src.api.models import Plant
+from src.app.models import Plant
 
 
 def test_create_plant(client):
