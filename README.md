@@ -39,7 +39,14 @@ $ source aliases.sh
 
 ---
 ## Execução
-Execute o seguinte comando para iniciar a aplicação:
+Em seu terminal, execute:
+
+```sh
+$ git clone git@github.com:Bruno-H-Terto/Desafio-TECSCI.git
+$ cd Desafio-TECSCI
+```
+
+Em seguida, realize o seguinte comando para iniciar a aplicação:
 
 ```sh
 $ docker compose build
